@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es">
+<html class="loading" lang="es">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -238,10 +238,25 @@ footer a:hover{color:var(--bone);border-color:var(--bone)}
   .item{animation:none}
 }
 
+
+/* ---------- Loader: dragón volando ---------- */
+html.loading,html.loading body{overflow:hidden}
+#loader{position:fixed;inset:0;z-index:200;background:#000;overflow:hidden;display:grid;place-items:center;transition:opacity .8s ease}
+#loader.out{opacity:0;pointer-events:none}
+#loader .fly{position:absolute;top:50%;left:0;width:min(150vw,900px);margin-top:calc(min(150vw,900px) / -2);animation:drk-fly 3.4s cubic-bezier(.45,.05,.3,1) forwards}
+#loader .fly img{width:100%;display:block;mix-blend-mode:screen;animation:drk-wave 1.7s ease-in-out infinite;filter:drop-shadow(0 0 24px rgba(239,232,220,.35))}
+@keyframes drk-fly{
+  0%{transform:translateX(-110%) scale(.55);opacity:0}
+  12%{opacity:1}
+  100%{transform:translateX(calc(50vw - 50%)) scale(1)}}
+@keyframes drk-wave{0%,100%{transform:translateY(-6%) rotate(-3deg)}50%{transform:translateY(6%) rotate(3deg)}}
+#loader .pct{position:absolute;bottom:6vh;left:0;right:0;text-align:center;font:700 .7rem 'Space Mono',monospace;letter-spacing:.3em;color:#8a8079}
+@media(prefers-reduced-motion:reduce){#loader .fly{animation:none;left:50%;transform:translateX(-50%)}#loader .fly img{animation:none}}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
 </head>
 <body>
+<div id="loader" aria-hidden="true"><div class="fly"><img src="img/logo.webp" alt=""></div><p class="pct">ABRIENDO LA BÓVEDA</p></div>
 <nav><a class="logo" href="#">DRAYKO</a><div><a href="#drop">Drop</a><a href="#club">Club</a><a href="#contacto">Contacto</a><a href="https://wa.me/5492612148934" target="_blank" rel="noopener">WhatsApp</a><button id="cartBtn">Carrito (<span id="count">0</span>)</button></div></nav>
 
 <header class="hero" id="hero">
@@ -323,6 +338,13 @@ for(let i=0;i<70;i++)P.push({x:Math.random(),y:Math.random(),r:Math.random()*2+.
 const io=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting&&(e.target.classList.add('in'),io.unobserve(e.target))),{threshold:.15});
 document.querySelectorAll('.card,h2,.about').forEach((el,i)=>{el.classList.add('reveal');el.style.transitionDelay=(i%4)*.08+'s';io.observe(el)});
 document.querySelectorAll('.card').forEach(c=>{c.addEventListener('pointermove',e=>{const r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;c.style.transform=`perspective(700px) rotateY(${x*10}deg) rotateX(${-y*10}deg)`});c.addEventListener('pointerleave',()=>c.style.transform='')});
+
+// loader: el dragón cruza la pantalla y luego entra el sitio
+(()=>{const L=document.getElementById('loader'),h=document.documentElement;let anim=false,load=document.readyState==='complete';
+ const go=()=>{if(!(anim&&load))return;L.classList.add('out');h.classList.remove('loading');setTimeout(()=>L.remove(),900)};
+ setTimeout(()=>{anim=true;go()},matchMedia('(prefers-reduced-motion:reduce)').matches?300:3200);
+ if(!load)addEventListener('load',()=>{load=true;go()});
+ setTimeout(()=>{anim=load=true;go()},7000)})();
 </script>
 </body>
 </html>
