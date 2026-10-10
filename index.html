@@ -253,6 +253,10 @@ html.loading,html.loading body{overflow:hidden}
 #loader .pct{position:absolute;bottom:5vh;left:0;right:0;text-align:center;font:400 clamp(2.4rem,9vw,4.5rem)/1 'Permanent Marker',cursive;letter-spacing:.08em;color:#EFE8DC;text-shadow:3px 3px 0 #000,0 0 18px rgba(239,232,220,.25);animation:drk-in 1.2s .6s both}
 @keyframes drk-in{from{opacity:0;transform:translateY(16px)}}
 @media(prefers-reduced-motion:reduce){#loader .fly{animation:none}}
+
+/* Fuente de marca: poner el archivo en fonts/ (DragonBrushScript.woff2, .woff, .otf o .ttf). Si falta, cae a Permanent Marker. */
+@font-face{font-family:'Dragon Brush Script';font-display:swap;src:local('Dragon Brush Script'),url('fonts/DragonBrushScript.woff2') format('woff2'),url('fonts/DragonBrushScript.woff') format('woff'),url('fonts/DragonBrushScript.otf') format('opentype'),url('fonts/DragonBrushScript.ttf') format('truetype')}
+.logo,#loader .pct{font-family:'Dragon Brush Script','Permanent Marker',cursive}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
 </head>
@@ -317,8 +321,12 @@ function drawCart(){try{localStorage.setItem('cart',JSON.stringify(cart))}catch(
  document.getElementById('count').textContent=cart.reduce((s,l)=>s+l.q,0);document.getElementById('send').disabled=!cart.length}
 document.getElementById('items').onclick=e=>{const {inc,dec}=e.target.dataset;if(inc!==undefined)cart[inc].q++;if(dec!==undefined&&--cart[dec].q<=0)cart.splice(dec,1);drawCart()};
 cartBtn.onclick=()=>panel.classList.add('open');close.onclick=()=>panel.classList.remove('open');
+const INTRO='Hola! Me quiero sumar al club de DRAYKO 🐉. ¿Me mandan la info del stock disponible y envíos?';
+document.querySelectorAll('a[href^="https://wa.me/"]').forEach(a=>a.href='https://wa.me/'+PHONE+'?text='+encodeURIComponent(INTRO));
 send.onclick=()=>{const n=cname.value.trim();const price=l=>+String(items[l.i][2]).replace(/\D/g,'')||0;const lines=cart.map(l=>`• ${l.q} x ${items[l.i][0]} (Talle ${l.sz})${price(l)?' - $'+(price(l)*l.q).toLocaleString('es-AR'):''}`);
- const txt=`Hola DRAYKO!${n?' Soy '+n+'.':''} Quiero hacer este pedido:\n\n${lines.join('\n')}\n\n${total.textContent.toUpperCase()}`;
+ const txt=`${INTRO}
+
+${n?'Soy '+n+'. ':''}Quiero hacer este pedido:\n\n${lines.join('\n')}\n\n${total.textContent.toUpperCase()}`;
  window.open('https://wa.me/'+PHONE+'?text='+encodeURIComponent(txt),'_blank')};
 filters.onclick=e=>{const c=e.target.dataset.c;if(!c)return;filters.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===e.target));
  grid.querySelectorAll('.card').forEach(k=>k.style.display=(c==='Todo'||k.dataset.c===c)?'':'none')};
