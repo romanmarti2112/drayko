@@ -250,13 +250,14 @@ html.loading,html.loading body{overflow:hidden}
   15%{opacity:1}
   55%{transform:translate(-14vw,-6vh) rotate(8deg) scale(.85)}
   100%{transform:translate(0,0) rotate(0) scale(1)}}
-#loader .pct{position:absolute;bottom:6vh;left:0;right:0;text-align:center;font:700 .7rem 'Space Mono',monospace;letter-spacing:.3em;color:#8a8079}
+#loader .pct{position:absolute;bottom:5vh;left:0;right:0;text-align:center;font:400 clamp(2.4rem,9vw,4.5rem)/1 'Permanent Marker',cursive;letter-spacing:.08em;color:#EFE8DC;text-shadow:3px 3px 0 #000,0 0 18px rgba(239,232,220,.25);animation:drk-in 1.2s .6s both}
+@keyframes drk-in{from{opacity:0;transform:translateY(16px)}}
 @media(prefers-reduced-motion:reduce){#loader .fly{animation:none}}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
 </head>
 <body>
-<div id="loader" aria-hidden="true"><div class="fly"><canvas id="dragonCv"></canvas></div><p class="pct">ABRIENDO LA BÓVEDA</p></div>
+<div id="loader" aria-hidden="true"><div class="fly"><canvas id="dragonCv"></canvas></div><p class="pct">DRAYKO</p></div>
 <nav><a class="logo" href="#">DRAYKO</a><div><a href="#drop">Drop</a><a href="#club">Club</a><a href="#contacto">Contacto</a><a href="https://wa.me/5492612148934" target="_blank" rel="noopener">WhatsApp</a><button id="cartBtn">Carrito (<span id="count">0</span>)</button></div></nav>
 
 <header class="hero" id="hero">
