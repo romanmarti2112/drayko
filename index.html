@@ -225,6 +225,15 @@ footer a:hover{color:var(--bone);border-color:var(--bone)}
 .pfoot::after{content:"*** GRACIAS · NO RULES ***";text-align:center;font-size:.65rem;letter-spacing:.2em;color:#555;padding-top:6px}
 
 /* ---------- Móvil ---------- */
+/* Grilla de productos: tarjetas parejas, botón siempre abajo, sin huérfano */
+.grid{grid-template-columns:repeat(4,1fr);gap:34px 24px;align-items:stretch}
+.card{display:flex;flex-direction:column}
+.card>div:first-of-type{flex:1;align-items:flex-start;gap:8px}
+.card .sizes{margin-top:auto}
+.card button.add{margin-top:auto}
+@media(max-width:1100px){.grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:800px){.grid{grid-template-columns:repeat(2,1fr);gap:28px 14px}}
+@media(max-width:420px){.grid{grid-template-columns:1fr}}
 @media(max-width:640px){
   nav{padding:10px 4vw}
   nav div a{margin-left:12px;font-size:11px}
