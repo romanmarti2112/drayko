@@ -317,8 +317,8 @@ function drawCart(){try{localStorage.setItem('cart',JSON.stringify(cart))}catch(
  document.getElementById('count').textContent=cart.reduce((s,l)=>s+l.q,0);document.getElementById('send').disabled=!cart.length}
 document.getElementById('items').onclick=e=>{const {inc,dec}=e.target.dataset;if(inc!==undefined)cart[inc].q++;if(dec!==undefined&&--cart[dec].q<=0)cart.splice(dec,1);drawCart()};
 cartBtn.onclick=()=>panel.classList.add('open');close.onclick=()=>panel.classList.remove('open');
-send.onclick=()=>{const n=cname.value.trim();const lines=cart.map(l=>`• ${l.q} x ${items[l.i][0]} (Talle ${l.sz})${items[l.i][2]?' - $'+items[l.i][2]:''}`);
- const txt=`Hola DRAYKO!${n?' Soy '+n+'.':''} Quiero hacer este pedido:\n\n${lines.join('\n')}\n\n${total.textContent}`;
+send.onclick=()=>{const n=cname.value.trim();const price=l=>+String(items[l.i][2]).replace(/\D/g,'')||0;const lines=cart.map(l=>`• ${l.q} x ${items[l.i][0]} (Talle ${l.sz})${price(l)?' - $'+(price(l)*l.q).toLocaleString('es-AR'):''}`);
+ const txt=`Hola DRAYKO!${n?' Soy '+n+'.':''} Quiero hacer este pedido:\n\n${lines.join('\n')}\n\n${total.textContent.toUpperCase()}`;
  window.open('https://wa.me/'+PHONE+'?text='+encodeURIComponent(txt),'_blank')};
 filters.onclick=e=>{const c=e.target.dataset.c;if(!c)return;filters.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===e.target));
  grid.querySelectorAll('.card').forEach(k=>k.style.display=(c==='Todo'||k.dataset.c===c)?'':'none')};
