@@ -243,20 +243,20 @@ footer a:hover{color:var(--bone);border-color:var(--bone)}
 html.loading,html.loading body{overflow:hidden}
 #loader{position:fixed;inset:0;z-index:200;background:#000;overflow:hidden;display:grid;place-items:center;transition:opacity .8s ease}
 #loader.out{opacity:0;pointer-events:none}
-#loader .fly{position:absolute;top:50%;left:0;width:min(150vw,900px);margin-top:calc(min(150vw,900px) / -2);animation:drk-fly 3.4s cubic-bezier(.45,.05,.3,1) forwards}
-#loader .fly img{width:100%;display:block;mix-blend-mode:screen;animation:drk-wave 1.7s ease-in-out infinite;filter:drop-shadow(0 0 24px rgba(239,232,220,.35))}
+#loader .fly{position:absolute;left:50%;top:50%;height:min(86vh,130vw);aspect-ratio:736/1041;margin:calc(min(86vh,130vw) / -2) 0 0 calc(min(86vh,130vw) * 736 / 1041 / -2);animation:drk-fly 3.4s cubic-bezier(.3,.1,.25,1) forwards}
+#loader canvas{width:100%;height:100%;display:block;mix-blend-mode:screen;filter:contrast(1.7) brightness(1.1)}
 @keyframes drk-fly{
-  0%{transform:translateX(-110%) scale(.55);opacity:0}
-  12%{opacity:1}
-  100%{transform:translateX(calc(50vw - 50%)) scale(1)}}
-@keyframes drk-wave{0%,100%{transform:translateY(-6%) rotate(-3deg)}50%{transform:translateY(6%) rotate(3deg)}}
+  0%{transform:translate(-75vw,45vh) rotate(-35deg) scale(.5);opacity:0}
+  15%{opacity:1}
+  55%{transform:translate(-14vw,-6vh) rotate(8deg) scale(.85)}
+  100%{transform:translate(0,0) rotate(0) scale(1)}}
 #loader .pct{position:absolute;bottom:6vh;left:0;right:0;text-align:center;font:700 .7rem 'Space Mono',monospace;letter-spacing:.3em;color:#8a8079}
-@media(prefers-reduced-motion:reduce){#loader .fly{animation:none;left:50%;transform:translateX(-50%)}#loader .fly img{animation:none}}
+@media(prefers-reduced-motion:reduce){#loader .fly{animation:none}}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
 </head>
 <body>
-<div id="loader" aria-hidden="true"><div class="fly"><img src="img/logo.webp" alt=""></div><p class="pct">ABRIENDO LA BÓVEDA</p></div>
+<div id="loader" aria-hidden="true"><div class="fly"><canvas id="dragonCv"></canvas></div><p class="pct">ABRIENDO LA BÓVEDA</p></div>
 <nav><a class="logo" href="#">DRAYKO</a><div><a href="#drop">Drop</a><a href="#club">Club</a><a href="#contacto">Contacto</a><a href="https://wa.me/5492612148934" target="_blank" rel="noopener">WhatsApp</a><button id="cartBtn">Carrito (<span id="count">0</span>)</button></div></nav>
 
 <header class="hero" id="hero">
@@ -345,6 +345,14 @@ document.querySelectorAll('.card').forEach(c=>{c.addEventListener('pointermove',
  setTimeout(()=>{anim=true;go()},matchMedia('(prefers-reduced-motion:reduce)').matches?300:3200);
  if(!load)addEventListener('load',()=>{load=true;go()});
  setTimeout(()=>{anim=load=true;go()},7000)})();
+
+// dragón: reptación (cada franja horizontal se desplaza con una onda desfasada)
+(()=>{const cv=document.getElementById('dragonCv');if(!cv)return;const cx=cv.getContext('2d'),im=new Image();im.src='img/dragon.png';
+ im.onload=()=>{const W=cv.width=im.width,H=cv.height=im.height,S=3,t0=performance.now();
+  (function f(now){if(!document.getElementById('dragonCv'))return;const t=(now-t0)/1000;cx.clearRect(0,0,W,H);
+   for(let y=0;y<H;y+=S){const k=y/H,amp=W*.045*(.25+.75*k),dx=amp*Math.sin(k*7-t*5)+W*.02*Math.sin(t*2.2);
+    cx.drawImage(im,0,y,W,S+1,dx,Math.round(y+Math.sin(k*5-t*5)*H*.006),W,S+1)}
+   requestAnimationFrame(f)})(t0)}})();
 </script>
 </body>
 </html>
