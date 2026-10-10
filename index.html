@@ -318,7 +318,8 @@ function drawCart(){try{localStorage.setItem('cart',JSON.stringify(cart))}catch(
  document.getElementById('total').textContent=t?'Total: $'+t.toLocaleString('es-AR'):'Total: a consultar';
  document.getElementById('count').textContent=cart.reduce((s,l)=>s+l.q,0);document.getElementById('send').disabled=!cart.length}
 document.getElementById('items').onclick=e=>{const {inc,dec}=e.target.dataset;if(inc!==undefined)cart[inc].q++;if(dec!==undefined&&--cart[dec].q<=0)cart.splice(dec,1);drawCart()};
-cartBtn.onclick=()=>panel.classList.add('open');close.onclick=()=>panel.classList.remove('open');
+cartBtn.onclick=()=>panel.classList.add('open');document.getElementById('close').onclick=()=>panel.classList.remove('open');
+addEventListener('keydown',e=>{if(e.key==='Escape')panel.classList.remove('open')});
 const INTRO='Hola! Me quiero sumar al club de DRAYKO 🐉. ¿Me mandan la info del stock disponible y envíos?';
 document.querySelectorAll('a[href^="https://wa.me/"]').forEach(a=>a.href='https://wa.me/'+PHONE+'?text='+encodeURIComponent(INTRO));
 send.onclick=()=>{const n=cname.value.trim();const price=l=>+String(items[l.i][2]).replace(/\D/g,'')||0;const lines=cart.map(l=>`• ${l.q} x ${items[l.i][0]} (Talle ${l.sz})${price(l)?' - $'+(price(l)*l.q).toLocaleString('es-AR'):''}`);
