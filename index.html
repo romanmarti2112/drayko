@@ -64,7 +64,182 @@ footer{padding:40px 5vw;border-top:1px solid #222;display:flex;justify-content:s
 .pfoot{padding:16px;border-top:1px solid #2a2a2a;display:flex;flex-direction:column;gap:10px}
 .pfoot input{padding:10px;background:#0b0b0b;border:1px solid #444;color:var(--fg);font:inherit}
 #send{background:#25d366;color:#000;border:0;padding:13px;font:inherit;font-weight:700;letter-spacing:2px;cursor:pointer}#send:disabled{opacity:.4;cursor:not-allowed}
+/* ==========================================================
+   DRAYKO — capa de estilos extra (solo CSS, no toca HTML ni JS)
+   Uso: pegalo al FINAL del <style> de index.html, o subilo como
+   archivo y agregá  <link rel="stylesheet" href="drayko-estilos.css">
+   después del <style> existente.
+   Estética: fanzine / papel rasgado / halftone / grano / ticket.
+   ========================================================== */
+
+
+:root{
+  --bone:#EFE8DC;
+  --coal:#1c1c1c;
+  --display:'Anton','Permanent Marker',Impact,sans-serif;
+}
+html{scroll-behavior:smooth}
+body{overflow-x:hidden;letter-spacing:.04em}
+::selection{background:var(--bone);color:#000}
+:focus-visible{outline:2px dashed var(--bone);outline-offset:3px}
+
+/* ---------- Grano analógico global ---------- */
+body::after{
+  content:"";position:fixed;inset:-50%;z-index:99;pointer-events:none;opacity:.13;mix-blend-mode:screen;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  animation:drk-grain .6s steps(6) infinite;
+}
+@keyframes drk-grain{
+  0%{transform:translate(0,0)}20%{transform:translate(-4%,3%)}40%{transform:translate(3%,-5%)}
+  60%{transform:translate(-5%,-2%)}80%{transform:translate(4%,4%)}100%{transform:translate(0,0)}}
+
+/* ---------- Nav ---------- */
+nav{border-bottom:3px solid var(--bone)}
+.logo{text-shadow:2px 2px 0 #000,3px 3px 0 #3a3a3a}
+nav div a{position:relative;letter-spacing:.14em}
+nav div a::after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:2px;background:var(--bone);transform:scaleX(0);transform-origin:left;transition:transform .15s steps(3)}
+nav div a:hover::after{transform:scaleX(1)}
+#cartBtn{border-width:2px;letter-spacing:.14em;transition:transform .1s steps(2),background .1s,color .1s}
+#cartBtn:hover{background:var(--bone);color:#000;transform:scale(1.06) rotate(-2deg)}
+
+/* ---------- Hero: halftone + viñeta + borde rasgado ---------- */
+.hero::before{
+  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.4;mix-blend-mode:overlay;
+  background:radial-gradient(circle,#000 1.2px,transparent 1.7px) 0 0/6px 6px;
+  -webkit-mask-image:linear-gradient(180deg,transparent 20%,#000);mask-image:linear-gradient(180deg,transparent 20%,#000);
+}
+.hero::after{
+  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,.75) 100%);
+}
+.hero{clip-path:polygon(0 0,100% 0,100% 96%,94% 99%,86% 96.5%,75% 100%,64% 97%,52% 99.5%,40% 96.5%,28% 100%,16% 97.5%,6% 99.5%,0 97%)}
+.hero .tags{display:flex;flex-wrap:wrap;gap:10px 14px;justify-content:center;font-size:.72rem;letter-spacing:.3em;color:var(--mute)}
+.hero .tags span{padding:6px 12px;border:1px dashed #555;transform:rotate(-1.5deg);line-height:1.5}
+.hero .tags span:nth-child(2){transform:rotate(1.5deg);background:var(--bone);color:#000;border-color:#000}
+
+/* ---------- Botones: bordes toscos + escala brusca ---------- */
+.btn{
+  position:relative;font-family:var(--display);font-weight:400;font-size:1.1rem;letter-spacing:.16em;border-width:3px;
+  clip-path:polygon(0 8%,3% 0,40% 4%,70% 0,100% 6%,98% 50%,100% 94%,60% 100%,25% 96%,0 100%,2% 55%);
+  transition:transform .12s steps(3),background .12s,color .12s,box-shadow .12s;
+}
+.btn:hover,.btn:focus-visible{transform:scale(1.08) rotate(-1.5deg);box-shadow:inset 0 0 0 3px #000}
+.btn:active{transform:scale(.95)}
+.hero .btns .btn:first-child{background:var(--bone);color:#000}
+.hero .btns .btn:first-child:hover{background:#000;color:var(--bone);box-shadow:inset 0 0 0 3px var(--bone)}
+
+/* ---------- Ticker: franja inclinada tipo cinta ---------- */
+.ticker{
+  position:relative;z-index:5;transform:rotate(-1.6deg) scaleX(1.05);margin:-14px 0 30px;
+  font-family:var(--display);font-weight:400;font-size:clamp(1rem,3vw,1.6rem);letter-spacing:.1em;
+  border-block:3px solid #000;box-shadow:0 0 0 3px var(--bone);
+}
+
+/* ---------- Secciones ---------- */
+section{position:relative}
+#drop{
+  background-image:radial-gradient(circle,#1a1a1a 1px,transparent 1.5px);background-size:8px 8px;
+}
+h2{
+  font-family:var(--display);font-weight:400;letter-spacing:.02em;line-height:.9;
+  text-shadow:3px 3px 0 #000,5px 5px 0 #2a2a2a;
+}
+h2::after{content:"";display:block;width:90px;height:6px;margin-top:14px;background:var(--bone);clip-path:polygon(0 30%,100% 0,96% 100%,4% 80%)}
+#club h2::after{margin-inline:auto}
+
+/* chips como sellos */
+.chip{border:2px solid var(--bone);letter-spacing:.16em;font-weight:700;transition:transform .1s steps(2)}
+.chip:nth-child(odd){transform:rotate(-1.5deg)}
+.chip:nth-child(even){transform:rotate(1.2deg)}
+.chip:hover{transform:scale(1.08) rotate(0)}
+.chip.on{box-shadow:3px 3px 0 #555}
+
+/* ---------- Tarjetas: papel pegado ---------- */
+.card{
+  position:relative;background:var(--bone);color:#000;border:0;border-radius:6px;padding:10px 10px 0;
+  box-shadow:0 8px 0 #1c1c1c,0 18px 30px rgba(0,0,0,.6);
+  will-change:transform;
+}
+.card::before{ /* cinta adhesiva */
+  content:"";position:absolute;top:-12px;left:50%;width:84px;height:24px;margin-left:-42px;z-index:2;
+  background:rgba(239,232,220,.55);backdrop-filter:blur(1px);transform:rotate(-3deg);
+  clip-path:polygon(0 10%,4% 0,8% 12%,92% 0,96% 14%,100% 4%,98% 90%,94% 100%,90% 88%,8% 100%,4% 86%,0 96%);
+}
+.card:nth-child(even)::before{transform:rotate(4deg)}
+.card img{border-radius:3px;filter:grayscale(.6) contrast(1.1);
+  background-image:radial-gradient(circle,rgba(0,0,0,.2) 1px,transparent 1.5px);background-size:5px 5px}
+.card:hover img{filter:grayscale(0) contrast(1.05);transform:scale(1.04)}
+.card .glow-wrap,.card>div:first-of-type{padding:12px 4px;font-family:var(--display);font-size:1rem;letter-spacing:.04em;line-height:1.2}
+.card>div:first-of-type small{display:block;margin-top:4px;font-family:'Space Mono',monospace;font-size:.62rem;letter-spacing:.14em;color:#555}
+.card>div:first-of-type span:last-child{font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;font-weight:700;border:1.5px dashed #000;padding:3px 8px;align-self:flex-start;transform:rotate(3deg)}
+.card .sizes{padding:0 4px 10px}
+.card .sizes button{border:1.5px solid #000;color:#000;font-weight:700;transition:transform .08s steps(2)}
+.card .sizes button:hover{transform:scale(1.1)}
+.card .sizes button.sel{background:#000;color:var(--bone)}
+.card .msg{padding:0 4px 6px;color:#b00020;font-weight:700}
+.card button.add{margin:0 -10px;width:calc(100% + 20px);background:#000;color:var(--bone);border-top:0;padding:13px;font-weight:700;letter-spacing:.2em;border-radius:0 0 6px 6px;transition:letter-spacing .15s steps(3),background .1s}
+.card button.add:hover{background:#222;color:var(--bone);letter-spacing:.3em}
+
+/* ---------- El Club ---------- */
+#club{
+  background:var(--bone);color:#000;margin-top:40px;
+  clip-path:polygon(0 0,6% 2%,14% 0,26% 1.5%,40% 0,55% 2%,70% 0,84% 1.6%,100% 0,100% 100%,0 100%);
+  padding-top:110px;
+}
+#club h2{text-shadow:3px 3px 0 #bbb}
+#club h2::after{background:#000}
+.about{color:#222;font-size:1rem;letter-spacing:.06em}
+.about::first-letter{font-family:var(--display);font-size:3rem;float:left;line-height:.8;margin:4px 8px 0 0}
+
+/* ---------- Footer / WhatsApp ---------- */
+footer{border-top:3px solid var(--bone);letter-spacing:.14em;background:#000}
+footer a{border-bottom:1px dashed var(--mute)}
+footer a:hover{color:var(--bone);border-color:var(--bone)}
+.wa-float{border-radius:0;border:3px solid #000;letter-spacing:.2em;box-shadow:4px 4px 0 #000;
+  clip-path:polygon(0 8%,4% 0,50% 5%,100% 0,98% 50%,100% 100%,50% 94%,4% 100%,2% 50%);
+  transition:transform .12s steps(3)}
+.wa-float:hover{transform:scale(1.1) rotate(-2deg);filter:none}
+
+/* ---------- Carrito: ticket / remito ---------- */
+#panel{
+  --fg:#111;--bg:var(--bone);--mute:#555;
+  background:var(--bone);color:#111;border-left:0;box-shadow:-12px 0 40px rgba(0,0,0,.7);
+  transition:right .45s cubic-bezier(.7,0,.2,1);
+  background-image:repeating-linear-gradient(transparent 0 27px,rgba(0,0,0,.06) 27px 28px);
+  clip-path:polygon(0 0,100% 0,100% 100%,0 100%);
+}
+#panel h3{font-family:var(--display);text-transform:uppercase;letter-spacing:.06em;border-bottom:2px dashed #111}
+#panel h3 button{border:2px solid #111;font-size:1.1rem;width:34px;height:34px;transition:background .1s}
+#panel h3 button:hover{background:#111;color:var(--bone)}
+#items p{text-align:center;padding:30px 0;color:#555;letter-spacing:.14em;line-height:1.8}
+.item{border-bottom:2px dashed #999;animation:drk-line .35s ease-out}
+@keyframes drk-line{from{opacity:0;transform:translateX(30px)}}
+.qty button{border:1.5px solid #111;color:#111;font-weight:700}
+.qty button:hover{background:#111;color:var(--bone)}
+.pfoot{border-top:2px dashed #111;background:transparent}
+#total{font-size:1.1rem;letter-spacing:.14em}
+.pfoot input{background:transparent;border:0;border-bottom:2px solid #111;color:#111;padding:10px 2px}
+.pfoot input::placeholder{color:#777}
+#send{letter-spacing:.2em;border:3px solid #000;transition:transform .1s steps(2)}
+#send:not(:disabled):hover{transform:scale(1.03) rotate(-.5deg)}
+.pfoot::after{content:"*** GRACIAS · NO RULES ***";text-align:center;font-size:.65rem;letter-spacing:.2em;color:#555;padding-top:6px}
+
+/* ---------- Móvil ---------- */
+@media(max-width:640px){
+  nav{padding:10px 4vw}
+  nav div a{margin-left:12px;font-size:11px}
+  #cartBtn{margin-left:10px}
+  .hero .tags{font-size:.62rem}
+  .grid{gap:26px}
+  section{padding:70px 5vw}
+}
+@media(prefers-reduced-motion:reduce){
+  body::after{animation:none}
+  .item{animation:none}
+}
+
 </style>
+<link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
 </head>
 <body>
 <nav><a class="logo" href="#">DRAYKO</a><div><a href="#drop">Drop</a><a href="#club">Club</a><a href="#contacto">Contacto</a><a href="https://wa.me/5492612148934" target="_blank" rel="noopener">WhatsApp</a><button id="cartBtn">Carrito (<span id="count">0</span>)</button></div></nav>
@@ -101,13 +276,13 @@ footer{padding:40px 5vw;border-top:1px solid #222;display:flex;justify-content:s
 <script>
 // editar nombres/precios acá (p vacío = "Consultar")
 const items=[
- ['Tee Oversize "Crew"','Remeras','','Blanca · estampa negra'],
- ['Tee Oversize "Perfil"','Remeras','','Blanca · estampa negra'],
- ['Tee Oversize "Domination 2026"','Remeras','','Negra · estampa azul'],
- ['Tee Oversize "Thorns"','Remeras','','Blanca · estampa negra'],
- ['Tee Oversize "Lions"','Remeras','','Negra · estampa blanca'],
- ['Short Denim Strass','Shorts','','Negro lavado · strass'],
- ['Short Denim Stripes','Shorts','','Negro lavado · bordado tonal']
+ ['Remera Boxy Fit "Thriller"','Remeras','27.000','Blanca · estampa negra'],
+ ['Remera Boxy Fit "Tempo"','Remeras','27.000','Blanca · estampa negra'],
+ ['Remera Boxy Fit "Domination"','Remeras','27.000','Negra · estampa azul'],
+ ['Remera Boxy Fit "Losan"','Remeras','27.000','Blanca · estampa negra'],
+ ['Remera Boxy Fit "Lyon"','Remeras','27.000','Negra · estampa blanca'],
+ ['Bermuda de Jean Baggy con Strass','Bermudas','35.000','Negro lavado · strass'],
+ ['Bermuda de Jean Baggy "Óxido"','Bermudas','35.000','Negro lavado · bordado tonal']
 ];
 const cats=['Todo',...new Set(items.map(i=>i[1]))];
 filters.innerHTML=cats.map((c,i)=>`<button class="chip${i?'':' on'}" data-c="${c}">${c}</button>`).join('');
