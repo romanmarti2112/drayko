@@ -1,0 +1,372 @@
+<!doctype html>
+<html class="loading" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VORAK — Club Streetwear (demo)</title>
+<meta name="robots" content="noindex,nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b0b0b;--fg:#eaded6;--mute:#8a8079}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--fg);font-family:'Space Mono',monospace;text-transform:uppercase}
+a{color:inherit}
+nav{position:sticky;top:0;z-index:9;display:flex;justify-content:space-between;align-items:center;padding:14px 5vw;background:#0b0b0bdd;backdrop-filter:blur(6px);border-bottom:1px solid #222}
+.logo{font-family:'Permanent Marker',cursive;font-size:28px;letter-spacing:2px;text-decoration:none}
+nav div a{margin-left:20px;font-size:13px;text-decoration:none}
+.hero{position:relative;overflow:hidden;min-height:100vh;display:grid;place-items:center;text-align:center;padding:0 5vw;background:radial-gradient(circle at var(--mx,50%) var(--my,45%),#3a2f28 0,#0b0b0b 55%);perspective:1000px}
+#embers{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.stage{position:relative;width:min(1150px,96vw);transform-style:preserve-3d;transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateY(var(--sy,0px));transition:transform .15s ease-out;opacity:var(--op,1)}
+.stage img{width:100%;display:block;mix-blend-mode:screen;user-select:none;-webkit-user-drag:none}
+.stage .glow{position:absolute;inset:0;filter:blur(28px) brightness(1.6);opacity:.45;transform:translateZ(-80px) scale(1.06);animation:pulse 4s ease-in-out infinite}
+.stage .main{position:relative;transform:translateZ(40px);animation:float 6s ease-in-out infinite;animation-delay:0s}
+@keyframes float{50%{translate:0 -14px}}
+@keyframes pulse{50%{opacity:.8}}
+.hero .tags{position:relative;margin-top:0}
+.hero .btns{position:relative;margin-top:-20px;padding-bottom:50px}
+.reveal{opacity:0;transform:translateY(40px) scale(.97);transition:opacity .7s,transform .7s}
+.reveal.in{opacity:1;transform:none}
+.card{transition:transform .2s}
+@media (prefers-reduced-motion:reduce){.stage .main,.stage .glow{animation:none}.reveal{opacity:1;transform:none}}
+.btn{display:inline-block;margin-top:40px;padding:14px 34px;border:2px solid var(--fg);text-decoration:none;font-weight:700;letter-spacing:3px}
+.btn:hover{background:var(--fg);color:var(--bg)}
+.ticker{overflow:hidden;white-space:nowrap;background:var(--fg);color:var(--bg);padding:10px 0;font-weight:700}
+.ticker p{display:inline-block;animation:run 18s linear infinite}
+@keyframes run{to{transform:translateX(-50%)}}
+section{padding:80px 5vw}
+h2{font-family:'Permanent Marker',cursive;font-size:clamp(40px,7vw,72px);margin-bottom:40px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:20px}
+.filters{display:flex;gap:10px;margin:-10px 0 30px}.chip{background:none;border:1px solid #444;color:var(--fg);font:inherit;padding:8px 18px;letter-spacing:2px;cursor:pointer;text-transform:uppercase}.chip.on,.chip:hover{background:var(--fg);color:var(--bg)}
+.card small{color:var(--mute);font-size:11px;text-transform:none}
+.card{border:1px solid #2a2a2a;background:#111}
+.card img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block;filter:grayscale(.3);transition:.3s}
+.card:hover img{filter:none;transform:scale(1.03)}
+.card div{display:flex;justify-content:space-between;padding:12px;font-size:13px}
+.card a{display:block;text-align:center;padding:10px;border-top:1px solid #2a2a2a;text-decoration:none;font-size:12px;letter-spacing:2px}
+.card a:hover{background:var(--fg);color:var(--bg)}
+.about{text-align:center;max-width:700px;margin:auto;line-height:1.8;color:var(--mute)}
+.wa-float{position:fixed;right:18px;bottom:18px;z-index:10;background:#25d366;color:#000;padding:14px 20px;font-weight:700;letter-spacing:2px;font-size:13px;text-decoration:none;border-radius:40px;box-shadow:0 4px 14px #0008}
+.wa-float:hover{filter:brightness(1.1)}
+footer{padding:40px 5vw;border-top:1px solid #222;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--mute)}
+
+.sizes{display:flex;gap:6px;padding:0 12px 10px}.sizes button{flex:1;padding:7px 0;border:1px solid #444;background:none;color:var(--fg);font:inherit;cursor:pointer}.sizes button.sel{background:var(--fg);color:var(--bg)}
+.card .msg{display:block;padding:0 12px 6px;font-size:11px;color:#e66;min-height:16px}
+.card button.add{width:100%;padding:10px;border:0;border-top:1px solid #2a2a2a;background:none;color:var(--fg);font:inherit;font-size:12px;letter-spacing:2px;cursor:pointer;text-transform:uppercase}
+.card button.add:hover{background:var(--fg);color:var(--bg)}
+#cartBtn{margin-left:20px;background:none;border:1px solid var(--fg);color:var(--fg);font:inherit;font-size:13px;padding:6px 12px;cursor:pointer;text-transform:uppercase}
+#panel{position:fixed;top:0;right:-440px;width:min(420px,100%);height:100%;background:#111;border-left:1px solid #2a2a2a;transition:right .25s;z-index:20;display:flex;flex-direction:column}
+#panel.open{right:0}
+#panel h3{font-family:'Permanent Marker',cursive;font-size:26px;padding:16px;border-bottom:1px solid #2a2a2a;display:flex;justify-content:space-between;font-weight:400}
+#panel h3 button{background:none;border:0;color:var(--fg);font-size:26px;cursor:pointer}
+#items{flex:1;overflow:auto;padding:12px 16px}
+.item{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 0;border-bottom:1px solid #222;font-size:13px}
+.item small{color:var(--mute);text-transform:none}
+.qty{display:flex;align-items:center;gap:8px}.qty button{width:26px;height:26px;border:1px solid #444;background:none;color:var(--fg);cursor:pointer}
+.pfoot{padding:16px;border-top:1px solid #2a2a2a;display:flex;flex-direction:column;gap:10px}
+.pfoot input{padding:10px;background:#0b0b0b;border:1px solid #444;color:var(--fg);font:inherit}
+#send{background:#25d366;color:#000;border:0;padding:13px;font:inherit;font-weight:700;letter-spacing:2px;cursor:pointer}#send:disabled{opacity:.4;cursor:not-allowed}
+/* ==========================================================
+   VORAK — capa de estilos extra (solo CSS, no toca HTML ni JS)
+   Uso: pegalo al FINAL del <style> de index.html, o subilo como
+   archivo y agregá  <link rel="stylesheet" href="vorak-estilos.css">
+   después del <style> existente.
+   Estética: fanzine / papel rasgado / halftone / grano / ticket.
+   ========================================================== */
+
+
+:root{
+  --bone:#EFE8DC;
+  --coal:#1c1c1c;
+  --display:'Anton','Permanent Marker',Impact,sans-serif;
+}
+html{scroll-behavior:smooth}
+body{overflow-x:hidden;letter-spacing:.04em}
+::selection{background:var(--bone);color:#000}
+:focus-visible{outline:2px dashed var(--bone);outline-offset:3px}
+
+/* ---------- Grano analógico global ---------- */
+body::after{
+  content:"";position:fixed;inset:-50%;z-index:99;pointer-events:none;opacity:.13;mix-blend-mode:screen;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+@keyframes drk-grain{
+  0%{transform:translate(0,0)}20%{transform:translate(-4%,3%)}40%{transform:translate(3%,-5%)}
+  60%{transform:translate(-5%,-2%)}80%{transform:translate(4%,4%)}100%{transform:translate(0,0)}}
+
+/* ---------- Nav ---------- */
+nav{border-bottom:3px solid var(--bone)}
+.logo{text-shadow:2px 2px 0 #000,3px 3px 0 #3a3a3a}
+nav div a{position:relative;letter-spacing:.14em}
+nav div a::after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:2px;background:var(--bone);transform:scaleX(0);transform-origin:left;transition:transform .15s steps(3)}
+nav div a:hover::after{transform:scaleX(1)}
+#cartBtn{border-width:2px;letter-spacing:.14em;transition:transform .1s steps(2),background .1s,color .1s}
+#cartBtn:hover{background:var(--bone);color:#000;transform:scale(1.06) rotate(-2deg)}
+
+/* ---------- Hero: halftone + viñeta + borde rasgado ---------- */
+.hero::before{
+  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.4;mix-blend-mode:overlay;
+  background:radial-gradient(circle,#000 1.2px,transparent 1.7px) 0 0/6px 6px;
+  -webkit-mask-image:linear-gradient(180deg,transparent 20%,#000);mask-image:linear-gradient(180deg,transparent 20%,#000);
+}
+.hero::after{
+  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,.75) 100%);
+}
+.hero{clip-path:polygon(0 0,100% 0,100% 96%,94% 99%,86% 96.5%,75% 100%,64% 97%,52% 99.5%,40% 96.5%,28% 100%,16% 97.5%,6% 99.5%,0 97%)}
+.hero .tags{display:flex;flex-wrap:wrap;gap:10px 14px;justify-content:center;font-size:.72rem;letter-spacing:.3em;color:var(--mute)}
+.hero .tags span{padding:6px 12px;border:1px dashed #555;transform:rotate(-1.5deg);line-height:1.5}
+.hero .tags span:nth-child(2){transform:rotate(1.5deg);background:var(--bone);color:#000;border-color:#000}
+
+/* ---------- Botones: bordes toscos + escala brusca ---------- */
+.btn{
+  position:relative;font-family:var(--display);font-weight:400;font-size:1.1rem;letter-spacing:.16em;border-width:3px;
+  clip-path:polygon(0 8%,3% 0,40% 4%,70% 0,100% 6%,98% 50%,100% 94%,60% 100%,25% 96%,0 100%,2% 55%);
+  transition:transform .12s steps(3),background .12s,color .12s,box-shadow .12s;
+}
+.btn:hover,.btn:focus-visible{transform:scale(1.08) rotate(-1.5deg);box-shadow:inset 0 0 0 3px #000}
+.btn:active{transform:scale(.95)}
+.hero .btns .btn:first-child{background:var(--bone);color:#000}
+.hero .btns .btn:first-child:hover{background:#000;color:var(--bone);box-shadow:inset 0 0 0 3px var(--bone)}
+
+/* ---------- Ticker: franja inclinada tipo cinta ---------- */
+.ticker{
+  position:relative;z-index:5;transform:rotate(-1.6deg) scaleX(1.05);margin:-14px 0 30px;
+  font-family:var(--display);font-weight:400;font-size:clamp(1rem,3vw,1.6rem);letter-spacing:.1em;
+  border-block:3px solid #000;box-shadow:0 0 0 3px var(--bone);
+}
+
+/* ---------- Secciones ---------- */
+section{position:relative}
+#drop{
+  background-image:radial-gradient(circle,#1a1a1a 1px,transparent 1.5px);background-size:8px 8px;
+}
+h2{
+  font-family:var(--display);font-weight:400;letter-spacing:.02em;line-height:.9;
+  text-shadow:3px 3px 0 #000,5px 5px 0 #2a2a2a;
+}
+h2::after{content:"";display:block;width:90px;height:6px;margin-top:14px;background:var(--bone);clip-path:polygon(0 30%,100% 0,96% 100%,4% 80%)}
+#club h2::after{margin-inline:auto}
+
+/* chips como sellos */
+.chip{border:2px solid var(--bone);letter-spacing:.16em;font-weight:700;transition:transform .1s steps(2)}
+.chip:nth-child(odd){transform:rotate(-1.5deg)}
+.chip:nth-child(even){transform:rotate(1.2deg)}
+.chip:hover{transform:scale(1.08) rotate(0)}
+.chip.on{box-shadow:3px 3px 0 #555}
+
+/* ---------- Tarjetas: papel pegado ---------- */
+.card{
+  position:relative;background:var(--bone);color:#000;border:0;border-radius:6px;padding:10px 10px 0;
+  box-shadow:0 8px 0 #1c1c1c,0 18px 30px rgba(0,0,0,.6);
+  will-change:transform;
+}
+.card::before{ /* cinta adhesiva */
+  content:"";position:absolute;top:-12px;left:50%;width:84px;height:24px;margin-left:-42px;z-index:2;
+  background:rgba(239,232,220,.55);backdrop-filter:blur(1px);transform:rotate(-3deg);
+  clip-path:polygon(0 10%,4% 0,8% 12%,92% 0,96% 14%,100% 4%,98% 90%,94% 100%,90% 88%,8% 100%,4% 86%,0 96%);
+}
+.card:nth-child(even)::before{transform:rotate(4deg)}
+.card img{border-radius:3px;filter:grayscale(.6) contrast(1.1);
+  background-image:radial-gradient(circle,rgba(0,0,0,.2) 1px,transparent 1.5px);background-size:5px 5px}
+.card:hover img{filter:grayscale(0) contrast(1.05);transform:scale(1.04)}
+.card .glow-wrap,.card>div:first-of-type{padding:12px 4px;font-family:var(--display);font-size:1rem;letter-spacing:.04em;line-height:1.2}
+.card>div:first-of-type small{display:block;margin-top:4px;font-family:'Space Mono',monospace;font-size:.62rem;letter-spacing:.14em;color:#555}
+.card>div:first-of-type span:last-child{font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;font-weight:700;border:1.5px dashed #000;padding:3px 8px;align-self:flex-start;transform:rotate(3deg)}
+.card .sizes{padding:0 4px 10px}
+.card .sizes button{border:1.5px solid #000;color:#000;font-weight:700;transition:transform .08s steps(2)}
+.card .sizes button:hover{transform:scale(1.1)}
+.card .sizes button.sel{background:#000;color:var(--bone)}
+.card .msg{padding:0 4px 6px;color:#b00020;font-weight:700}
+.card button.add{margin:0 -10px;width:calc(100% + 20px);background:#000;color:var(--bone);border-top:0;padding:13px;font-weight:700;letter-spacing:.2em;border-radius:0 0 6px 6px;transition:letter-spacing .15s steps(3),background .1s}
+.card button.add:hover{background:#222;color:var(--bone);letter-spacing:.3em}
+
+/* ---------- El Club ---------- */
+#club{
+  background:var(--bone);color:#000;margin-top:40px;
+  clip-path:polygon(0 0,6% 2%,14% 0,26% 1.5%,40% 0,55% 2%,70% 0,84% 1.6%,100% 0,100% 100%,0 100%);
+  padding-top:110px;
+}
+#club h2{text-shadow:3px 3px 0 #bbb}
+#club h2::after{background:#000}
+.about{color:#222;font-size:1rem;letter-spacing:.06em}
+.about::first-letter{font-family:var(--display);font-size:3rem;float:left;line-height:.8;margin:4px 8px 0 0}
+
+/* ---------- Footer / WhatsApp ---------- */
+footer{border-top:3px solid var(--bone);letter-spacing:.14em;background:#000}
+footer a{border-bottom:1px dashed var(--mute)}
+footer a:hover{color:var(--bone);border-color:var(--bone)}
+.wa-float{border-radius:0;border:3px solid #000;letter-spacing:.2em;box-shadow:4px 4px 0 #000;
+  clip-path:polygon(0 8%,4% 0,50% 5%,100% 0,98% 50%,100% 100%,50% 94%,4% 100%,2% 50%);
+  transition:transform .12s steps(3)}
+.wa-float:hover{transform:scale(1.1) rotate(-2deg);filter:none}
+
+/* ---------- Carrito: ticket / remito ---------- */
+#panel{
+  --fg:#111;--bg:var(--bone);--mute:#555;
+  background:var(--bone);color:#111;border-left:0;box-shadow:-12px 0 40px rgba(0,0,0,.7);
+  transition:right .45s cubic-bezier(.7,0,.2,1);
+  background-image:repeating-linear-gradient(transparent 0 27px,rgba(0,0,0,.06) 27px 28px);
+  clip-path:polygon(0 0,100% 0,100% 100%,0 100%);
+}
+#panel h3{font-family:var(--display);text-transform:uppercase;letter-spacing:.06em;border-bottom:2px dashed #111}
+#panel h3 button{border:2px solid #111;font-size:1.1rem;width:34px;height:34px;transition:background .1s}
+#panel h3 button:hover{background:#111;color:var(--bone)}
+#items p{text-align:center;padding:30px 0;color:#555;letter-spacing:.14em;line-height:1.8}
+.item{border-bottom:2px dashed #999;animation:drk-line .35s ease-out}
+@keyframes drk-line{from{opacity:0;transform:translateX(30px)}}
+.qty button{border:1.5px solid #111;color:#111;font-weight:700}
+.qty button:hover{background:#111;color:var(--bone)}
+.pfoot{border-top:2px dashed #111;background:transparent}
+#total{font-size:1.1rem;letter-spacing:.14em}
+.pfoot input{background:transparent;border:0;border-bottom:2px solid #111;color:#111;padding:10px 2px}
+.pfoot input::placeholder{color:#777}
+#send{letter-spacing:.2em;border:3px solid #000;transition:transform .1s steps(2)}
+#send:not(:disabled):hover{transform:scale(1.03) rotate(-.5deg)}
+.pfoot::after{content:"*** GRACIAS · NO RULES ***";text-align:center;font-size:.65rem;letter-spacing:.2em;color:#555;padding-top:6px}
+
+/* ---------- Móvil ---------- */
+/* Grilla de productos: tarjetas parejas, botón siempre abajo, sin huérfano */
+.grid{grid-template-columns:repeat(4,1fr);gap:34px 24px;align-items:stretch}
+.card{display:flex;flex-direction:column}
+.card>div:first-of-type{flex:1;align-items:flex-start;gap:8px}
+.card .sizes{margin-top:auto}
+.card button.add{margin-top:auto}
+@media(max-width:1100px){.grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:800px){.grid{grid-template-columns:repeat(2,1fr);gap:28px 14px}}
+@media(max-width:420px){.grid{grid-template-columns:1fr}}
+@media(max-width:640px){
+  nav{padding:10px 4vw}
+  nav div a{margin-left:12px;font-size:11px}
+  #cartBtn{margin-left:10px}
+  .hero .tags{font-size:.62rem}
+  .grid{gap:26px}
+  section{padding:70px 5vw}
+}
+@media(prefers-reduced-motion:reduce){
+  body::after{animation:none}
+  .item{animation:none}
+}
+
+
+/* ---------- Loader ---------- */
+html.loading,html.loading body{overflow:hidden}
+#loader{position:fixed;inset:0;z-index:200;background:#000;overflow:hidden;display:grid;place-items:center;transition:opacity .8s ease}
+#loader.out{opacity:0;pointer-events:none}
+#loader .fly{position:absolute;left:50%;top:50%;height:min(86vh,130vw);aspect-ratio:736/1041;margin:calc(min(86vh,130vw) / -2) 0 0 calc(min(86vh,130vw) * 736 / 1041 / -2);animation:drk-fly 3.4s cubic-bezier(.3,.1,.25,1) forwards}
+#loader canvas{width:100%;height:100%;display:block;mix-blend-mode:screen;filter:contrast(1.7) brightness(1.1)}
+@keyframes drk-fly{
+  0%{transform:translate(-75vw,45vh) rotate(-35deg) scale(.5);opacity:0}
+  15%{opacity:1}
+  55%{transform:translate(-14vw,-6vh) rotate(8deg) scale(.85)}
+  100%{transform:translate(0,0) rotate(0) scale(1)}}
+#loader .pct{position:absolute;bottom:5vh;left:0;right:0;text-align:center;font:400 clamp(2.4rem,9vw,4.5rem)/1 'Permanent Marker',cursive;letter-spacing:.08em;color:#EFE8DC;text-shadow:3px 3px 0 #000,0 0 18px rgba(239,232,220,.25);animation:drk-in 1.2s .6s both}
+@keyframes drk-in{from{opacity:0;transform:translateY(16px)}}
+@media(prefers-reduced-motion:reduce){#loader .fly{animation:none}}
+
+.logo,#loader .pct{font-family:'Road Rage','Permanent Marker',cursive;font-weight:400}
+.wm{font-family:'Road Rage','Permanent Marker',cursive;font-size:clamp(5rem,26vw,17rem);line-height:1;letter-spacing:.06em;color:#EFE8DC;text-shadow:4px 4px 0 #000;padding:6vh 0}
+.stage .glow.wm{position:absolute;inset:0;display:grid;place-items:center;mix-blend-mode:normal;color:#EFE8DC}
+.demo-badge{position:fixed;left:12px;bottom:12px;z-index:99;font:700 11px/1 'Space Mono',monospace;letter-spacing:.08em;text-transform:uppercase;background:#000c;color:#fff;border:1px solid #fff3;padding:8px 12px;border-radius:99px;pointer-events:none}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Road+Rage&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="demo-badge">Demo de concepto · Viña Studio</div>
+<div id="loader" aria-hidden="true"><div class="fly"></div><p class="pct">VORAK</p></div>
+<nav><a class="logo" href="#">VORAK</a><div><a href="#drop">Drop</a><a href="#club">Club</a><a href="#contacto">Contacto</a><a href="https://wa.me/5492610000000" target="_blank" rel="noopener">WhatsApp</a><button id="cartBtn">Carrito (<span id="count">0</span>)</button></div></nav>
+
+<header class="hero" id="hero">
+  <canvas id="embers"></canvas>
+  <div style="position:relative;z-index:1;display:grid;place-items:center">
+    <div class="stage" id="stage"><div class="wm glow" aria-hidden="true">VORAK</div><div class="wm main" role="img" aria-label="VORAK">VORAK</div></div>
+    <div class="tags"><span>Club<br>Streetwear</span><span>Made on the<br>streets</span></div>
+    <div class="btns"><a class="btn" href="#drop">Ver drop</a> <a class="btn" style="margin-left:10px" href="https://wa.me/5492610000000" target="_blank" rel="noopener">WhatsApp</a></div>
+  </div>
+</header>
+
+<div class="ticker" aria-hidden="true"><p>VORAK ✦ MADE ON THE STREETS ✦ CLUB STREETWEAR ✦ NEW DROP ✦ VORAK ✦ MADE ON THE STREETS ✦ CLUB STREETWEAR ✦ NEW DROP ✦&nbsp;</p></div>
+
+<section id="drop">
+  <h2>Drop 01</h2>
+  <div id="filters" class="filters"></div>
+  <div class="grid" id="grid"></div>
+</section>
+
+<section id="club">
+  <h2 style="text-align:center">El Club</h2>
+  <p class="about">Nacidos en la calle. Cortes oversize, gráficos crudos y denim pesado. Piezas limitadas: cuando se acaban, no vuelven.</p>
+</section>
+
+<footer id="contacto"><span>© 2026 VORAK · Sitio de ejemplo ficticio</span><a href="https://wa.me/5492610000000" target="_blank" rel="noopener">Pedidos por WhatsApp: +54 9 261 000-0000</a></footer>
+
+<aside id="panel"><h3>Tu carrito <button id="close" aria-label="Cerrar">×</button></h3><div id="items"></div>
+<div class="pfoot"><strong id="total"></strong><input id="cname" placeholder="Tu nombre (opcional)"><button id="send" disabled>Enviar pedido por WhatsApp</button></div></aside>
+
+<a class="wa-float" href="https://wa.me/5492610000000?text=Hola%20VORAK!" target="_blank" rel="noopener">WhatsApp</a>
+
+<script>
+// editar nombres/precios acá (p vacío = "Consultar")
+const items=[
+ ['Remera Boxy Fit "Eclipse"','Remeras','27.000','Negra · estampa blanca'],
+ ['Remera Boxy Fit "Pulso"','Remeras','27.000','Gris claro · costuras blancas'],
+ ['Remera Boxy Fit "Bruma"','Remeras','27.000','Topo · logo bordado'],
+ ['Remera Boxy Fit "Nómade"','Remeras','27.000','Grafito lavado · estampa blanca'],
+ ['Remera Boxy Fit "Ruido"','Remeras','27.000','Blanca, negra y grafito · lisas'],
+ ['Bermuda de Jean Baggy "Hollín"','Bermudas','35.000','Negro lavado · tiro bajo'],
+ ['Bermuda de Jean Baggy "Ceniza"','Bermudas','35.000','Negro lavado · bordado tonal']
+];
+const cats=['Todo',...new Set(items.map(i=>i[1]))];
+filters.innerHTML=cats.map((c,i)=>`<button class="chip${i?'':' on'}" data-c="${c}">${c}</button>`).join('');
+const PHONE='5492610000000',SIZES=['S','M','L','XL'],chosen={};
+let cart=[];try{cart=JSON.parse(localStorage.getItem('cart-demo'))||[]}catch(e){}
+grid.innerHTML=items.map(([n,c,p,d],i)=>`<article class="card" data-c="${c}"><img src="img/p${i+1}.jpg" alt="${n}" loading="lazy"><div><span>${n}<br><small>${d}</small></span><span>${p?'$'+p:'Consultar'}</span></div><div class="sizes" data-i="${i}">${SIZES.map(z=>`<button data-size="${z}">${z}</button>`).join('')}</div><span class="msg" id="msg${i}"></span><button class="add" data-add="${i}">Agregar al carrito</button></article>`).join('');
+grid.onclick=e=>{const z=e.target.closest('[data-size]');
+ if(z){const i=z.parentElement.dataset.i;chosen[i]=z.dataset.size;z.parentElement.querySelectorAll('button').forEach(b=>b.classList.toggle('sel',b===z));document.getElementById('msg'+i).textContent='';return}
+ const a=e.target.closest('[data-add]');if(!a)return;const i=+a.dataset.add,sz=chosen[i];
+ if(!sz){document.getElementById('msg'+i).textContent='Elegí un talle';return}
+ const l=cart.find(x=>x.i===i&&x.sz===sz);l?l.q++:cart.push({i,sz,q:1});drawCart();panel.classList.add('open')};
+function drawCart(){try{localStorage.setItem('cart-demo',JSON.stringify(cart))}catch(e){}
+  document.getElementById('items').innerHTML=cart.length?cart.map((l,k)=>`<div class="item"><div>${items[l.i][0]}<br><small>Talle ${l.sz}${items[l.i][2]?' · $'+items[l.i][2]:' · Consultar'}</small></div><div class="qty"><button data-dec="${k}">−</button>${l.q}<button data-inc="${k}">+</button></div></div>`).join(''):'<p>El carrito está vacío.</p>';
+ const t=cart.reduce((s,l)=>s+(+String(items[l.i][2]).replace(/\D/g,'')||0)*l.q,0);
+ document.getElementById('total').textContent=t?'Total: $'+t.toLocaleString('es-AR'):'Total: a consultar';
+ document.getElementById('count').textContent=cart.reduce((s,l)=>s+l.q,0);document.getElementById('send').disabled=!cart.length}
+document.getElementById('items').onclick=e=>{const {inc,dec}=e.target.dataset;if(inc!==undefined)cart[inc].q++;if(dec!==undefined&&--cart[dec].q<=0)cart.splice(dec,1);drawCart()};
+cartBtn.onclick=()=>panel.classList.add('open');document.getElementById('close').onclick=()=>panel.classList.remove('open');
+addEventListener('keydown',e=>{if(e.key==='Escape')panel.classList.remove('open')});
+const INTRO='Hola! Me quiero sumar al club de VORAK. ¿Me mandan la info del stock disponible y envíos?';
+document.querySelectorAll('a[href^="https://wa.me/"]').forEach(a=>a.href='https://wa.me/'+PHONE+'?text='+encodeURIComponent(INTRO));
+send.onclick=()=>{const n=cname.value.trim();const price=l=>+String(items[l.i][2]).replace(/\D/g,'')||0;const lines=cart.map(l=>`• ${l.q} x ${items[l.i][0]} (Talle ${l.sz})${price(l)?' - $'+(price(l)*l.q).toLocaleString('es-AR'):''}`);
+ const txt=`${INTRO}
+
+${n?'Soy '+n+'. ':''}Quiero hacer este pedido:\n\n${lines.join('\n')}\n\n${total.textContent.toUpperCase()}`;
+ window.open('https://wa.me/'+PHONE+'?text='+encodeURIComponent(txt),'_blank')};
+filters.onclick=e=>{const c=e.target.dataset.c;if(!c)return;filters.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===e.target));
+ grid.querySelectorAll('.card').forEach(k=>k.style.display=(c==='Todo'||k.dataset.c===c)?'':'none')};
+
+drawCart();
+// efectos: parallax 3D, brasas, reveal, tilt
+const hero=document.getElementById('hero'),stage=document.getElementById('stage');
+hero.addEventListener('pointermove',e=>{const r=hero.getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;
+ hero.style.setProperty('--mx',x*100+'%');hero.style.setProperty('--my',y*100+'%');
+ stage.style.setProperty('--ry',(x-.5)*14+'deg');stage.style.setProperty('--rx',(.5-y)*10+'deg')});
+hero.addEventListener('pointerleave',()=>{stage.style.setProperty('--ry','0deg');stage.style.setProperty('--rx','0deg')});
+addEventListener('scroll',()=>{const y=scrollY,h=hero.offsetHeight;stage.style.setProperty('--sy',y*.25+'px');stage.style.setProperty('--op',Math.max(0,1-y/h*1.1))},{passive:true});
+const cv=document.getElementById('embers'),cx=cv.getContext('2d');let P=[];
+function rs(){cv.width=hero.offsetWidth;cv.height=hero.offsetHeight}rs();addEventListener('resize',rs);
+for(let i=0;i<70;i++)P.push({x:Math.random(),y:Math.random(),r:Math.random()*2+.5,v:Math.random()*.0007+.0002,d:Math.random()*6});
+(function t(){cx.clearRect(0,0,cv.width,cv.height);P.forEach(p=>{p.y-=p.v;p.d+=.02;if(p.y<0){p.y=1;p.x=Math.random()}
+ cx.fillStyle='rgba(234,222,214,'+(.25+.35*Math.sin(p.d))+')';cx.beginPath();cx.arc(p.x*cv.width+Math.sin(p.d)*12,p.y*cv.height,p.r,0,7);cx.fill()});requestAnimationFrame(t)})();
+const io=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting&&(e.target.classList.add('in'),io.unobserve(e.target))),{threshold:.15});
+document.querySelectorAll('.card,h2,.about').forEach((el,i)=>{el.classList.add('reveal');el.style.transitionDelay=(i%4)*.08+'s';io.observe(el)});
+document.querySelectorAll('.card').forEach(c=>{c.addEventListener('pointermove',e=>{const r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;c.style.transform=`perspective(700px) rotateY(${x*10}deg) rotateX(${-y*10}deg)`});c.addEventListener('pointerleave',()=>c.style.transform='')});
+
+// loader: entra el sitio al terminar la animación
+(()=>{const L=document.getElementById('loader'),h=document.documentElement;let anim=false,load=document.readyState==='complete';
+ const go=()=>{if(!(anim&&load))return;L.classList.add('out');h.classList.remove('loading');setTimeout(()=>L.remove(),900)};
+ setTimeout(()=>{anim=true;go()},matchMedia('(prefers-reduced-motion:reduce)').matches?300:3200);
+ if(!load)addEventListener('load',()=>{load=true;go()});
+ setTimeout(()=>{anim=load=true;go()},7000)})();
+
+</script>
+</body>
+</html>
