@@ -1,0 +1,10 @@
+{
+  "name": "drayko",
+  "main": "worker/index.js",
+  "compatibility_date": "2025-09-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": ".",
+    "run_worker_first": ["/api/*"]
+  }
+}
