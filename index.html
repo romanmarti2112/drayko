@@ -264,7 +264,7 @@ html.loading,html.loading body{overflow:hidden}
 
 .logo,#loader .pct{font-family:'Road Rage','Permanent Marker',cursive;font-weight:400}
 
-/* ---- Animación sello + envío + panel del dueño ---- */
+/* ---- Animación sello + envío ---- */
 .fx-stamp{position:fixed;z-index:9999;pointer-events:none;font:2.2rem/1 'Anton',Impact,sans-serif;letter-spacing:.06em;color:#c8372d;border:5px solid #c8372d;padding:6px 16px;background:rgba(239,232,220,.93);transform:translate(-50%,-50%) rotate(-10deg);animation:fxStamp 1s cubic-bezier(.2,1.6,.4,1) forwards}
 @keyframes fxStamp{0%{transform:translate(-50%,-50%) rotate(-10deg) scale(3);opacity:0}25%{transform:translate(-50%,-50%) rotate(-10deg) scale(1);opacity:1}80%{opacity:1}100%{transform:translate(-50%,-50%) rotate(-10deg) scale(1);opacity:0}}
 .fx-send{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.92);display:grid;place-items:center;align-content:center;color:#EFE8DC;text-align:center}
@@ -273,22 +273,6 @@ html.loading,html.loading body{overflow:hidden}
 .fx-paper em{position:absolute;left:8%;right:8%;bottom:16%;font:normal 2rem/1 'Anton',Impact,sans-serif;color:#c8372d;border:5px solid #c8372d;padding:8px;transform:rotate(-12deg);opacity:0;animation:fxStamp2 .35s .9s cubic-bezier(.2,1.6,.4,1) forwards}
 @keyframes fxStamp2{from{transform:rotate(-12deg) scale(3);opacity:0}to{transform:rotate(-12deg) scale(1);opacity:1}}
 @keyframes fxShake{20%,60%{transform:translateX(-6px) rotate(-1deg)}40%,80%{transform:translateX(6px) rotate(1deg)}}
-#adminOpen{cursor:pointer;border-bottom:1px dashed var(--mute)}
-#apanel{position:fixed;top:0;right:-480px;width:min(460px,100%);height:100%;background:#EFE8DC;color:#111;z-index:30;transition:right .25s;display:flex;flex-direction:column;--fg:#111;--mute:#555}
-#apanel.open{right:0}
-#apanel h3{font-family:'Anton',Impact,sans-serif;text-transform:uppercase;letter-spacing:.06em;font-weight:400;font-size:24px;padding:16px;border-bottom:2px dashed #111;display:flex;justify-content:space-between}
-#apanel h3 button{border:2px solid #111;background:none;color:#111;width:34px;height:34px;cursor:pointer;font-size:1.1rem}
-#abody{flex:1;overflow-y:auto;padding:14px 16px}
-.aitem{display:flex;gap:10px;align-items:center;border-bottom:2px dashed #999;padding:8px 0;font-size:12px}
-.aitem img{width:48px;height:48px;object-fit:cover;filter:none!important;flex:none}.aitem .ai{flex:1;min-width:0}
-.aitem button,#apanel .abtn{border:2px solid #111;background:none;color:#111;padding:6px 10px;font:inherit;font-size:11px;text-transform:uppercase;cursor:pointer}
-.aitem button:hover,#apanel .abtn:hover{background:#111;color:#EFE8DC}
-#apanel .abtn.main{background:#111;color:#EFE8DC;width:100%;padding:12px;margin-top:10px}
-#aform{display:grid;gap:10px;margin-top:14px;border-top:2px dashed #111;padding-top:12px}
-#aform label{display:grid;gap:4px;font-size:11px;letter-spacing:.1em;text-transform:uppercase}
-#aform input,#aform textarea,#aform select{border:2px solid #111;background:transparent;color:#111;padding:8px;font:inherit;text-transform:none;letter-spacing:0;width:100%}
-.asz{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.apv img{max-width:100%;max-height:140px;display:block;margin-bottom:6px}
 .sizes button:disabled{opacity:.3;text-decoration:line-through;cursor:not-allowed}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Road+Rage&display=swap" rel="stylesheet">
@@ -319,23 +303,10 @@ html.loading,html.loading body{overflow:hidden}
   <p class="about">Nacidos en la calle. Cortes oversize, gráficos crudos y denim pesado. Piezas limitadas: cuando se acaban, no vuelven.</p>
 </section>
 
-<footer id="contacto"><span>© 2026 DRAYKO</span><a id="adminOpen" role="button" tabindex="0">Admin</a><a href="https://wa.me/5492612148934" target="_blank" rel="noopener">Pedidos por WhatsApp: +54 9 2612 14-8934</a></footer>
+<footer id="contacto"><span>© 2026 DRAYKO</span><a href="https://wa.me/5492612148934" target="_blank" rel="noopener">Pedidos por WhatsApp: +54 9 2612 14-8934</a></footer>
 
 <aside id="panel"><h3>Tu carrito <button id="close" aria-label="Cerrar">×</button></h3><div id="items"></div>
 <div class="pfoot"><strong id="total"></strong><input id="cname" placeholder="Tu nombre (opcional)"><button id="send" disabled>Enviar pedido por WhatsApp</button></div></aside>
-
-
-<aside id="apanel" aria-label="Panel del dueño"><h3>Panel del dueño <button id="aclose" aria-label="Cerrar">×</button></h3>
-<div id="abody"><div id="alist"></div><button class="abtn main" id="anew" type="button">+ Nueva prenda</button>
-<form id="aform" hidden>
-<label>Nombre<input id="a_n" required maxlength="70"></label>
-<label>Descripción<textarea id="a_d" maxlength="200"></textarea></label>
-<label>Precio ($, sin puntos)<input id="a_p" type="number" min="0" step="500"></label>
-<label>Categoría<select id="a_c"><option>Remeras</option><option>Bermudas</option><option>Buzos</option><option>Pantalones</option></select></label>
-<span style="font-size:11px;letter-spacing:.1em">TALLES Y STOCK (vacío = no hay ese talle)</span><div class="asz" id="a_s"></div>
-<label>Foto<input type="file" accept="image/*" id="a_f"></label><div class="apv" id="a_pv"></div>
-<button class="abtn main" type="submit">Guardar</button><button class="abtn" type="button" id="acancel">Cancelar</button>
-</form></div></aside>
 
 <a class="wa-float" href="https://wa.me/5492612148934?text=Hola%20DRAYKO!" target="_blank" rel="noopener">WhatsApp</a>
 
@@ -350,24 +321,22 @@ const items=[
  ['Bermuda de Jean Baggy con Strass','Bermudas','35.000','Negro lavado · strass'],
  ['Bermuda de Jean Baggy "Óxido"','Bermudas','35.000','Negro lavado · bordado tonal']
 ];
-const DEFAULT_ITEMS=items.map((x,i)=>[...x,null,'img/p'+(i+1)+'.jpg']);
-let SAVED=null;try{SAVED=JSON.parse(localStorage.getItem('drayko-catalog'))}catch(e){}
-const CATALOG=Array.isArray(SAVED)?SAVED:DEFAULT_ITEMS;
-items.length=0;CATALOG.forEach(x=>items.push(x));
-const stockOf=(i,z)=>items[i][4]?items[i][4][z]:Infinity;
-const cats=['Todo',...new Set(items.map(i=>i[1]))];
-filters.innerHTML=cats.map((c,i)=>`<button class="chip${i?'':' on'}" data-c="${c}">${c}</button>`).join('');
+function renderFilters(){const cats=['Todo',...new Set(items.map(i=>i[1]))];
+filters.innerHTML=cats.map((c,i)=>`<button class="chip${i?'':' on'}" data-c="${c}">${c}</button>`).join('')}
 const PHONE='5492612148934',SIZES=['S','M','L','XL'],chosen={};
 const sizesOf=it=>it[4]?Object.keys(it[4]):SIZES;
+const stockOf=(i,z)=>items[i][4]?items[i][4][z]:Infinity;
 let cart=[];try{cart=JSON.parse(localStorage.getItem('cart'))||[]}catch(e){}
-grid.innerHTML=items.map(([n,c,p,d],i)=>`<article class="card" data-c="${c}"><img src="${items[i][5]}" alt="${n}" loading="lazy"><div><span>${n}<br><small>${d}</small></span><span>${p?'$'+p:'Consultar'}</span></div><div class="sizes" data-i="${i}">${sizesOf(items[i]).map(z=>`<button data-size="${z}"${stockOf(i,z)>0?'':' disabled'}>${z}</button>`).join('')}</div><span class="msg" id="msg${i}"></span><button class="add" data-add="${i}">Agregar al carrito</button></article>`).join('');
+cart.forEach(l=>{l.n=l.n||(items[l.i]&&items[l.i][0])});
+function renderGrid(){grid.innerHTML=items.map(([n,c,p,d],i)=>`<article class="card" data-c="${c}"><img src="${items[i][5]||'img/p'+(i+1)+'.jpg'}" alt="${n}" loading="lazy"><div><span>${n}<br><small>${d}</small></span><span>${p?'$'+p:'Consultar'}</span></div><div class="sizes" data-i="${i}">${sizesOf(items[i]).map(z=>`<button data-size="${z}"${stockOf(i,z)>0?'':' disabled'}>${z}</button>`).join('')}</div><span class="msg" id="msg${i}"></span><button class="add" data-add="${i}">Agregar al carrito</button></article>`).join('')}
+renderFilters();renderGrid();
 grid.onclick=e=>{const z=e.target.closest('[data-size]');
  if(z){if(z.disabled)return;const i=z.parentElement.dataset.i;chosen[i]=z.dataset.size;z.parentElement.querySelectorAll('button').forEach(b=>b.classList.toggle('sel',b===z));document.getElementById('msg'+i).textContent='';return}
  const a=e.target.closest('[data-add]');if(!a)return;const i=+a.dataset.add,sz=chosen[i];
  if(!sz){document.getElementById('msg'+i).textContent='Elegí un talle';return}
  const l=cart.find(x=>x.i===i&&x.sz===sz);
  if((l?l.q:0)>=stockOf(i,sz)){document.getElementById('msg'+i).textContent='No hay más stock de ese talle';return}
- l?l.q++:cart.push({i,sz,q:1});drawCart();
+ l?l.q++:cart.push({i,n:items[i][0],sz,q:1});drawCart();
  const r=a.getBoundingClientRect(),st=document.createElement('div');st.className='fx-stamp';st.textContent='AGREGADO';st.style.left=r.left+r.width/2+'px';st.style.top=r.top+r.height/2+'px';document.body.appendChild(st);
  setTimeout(()=>st.remove(),1000);setTimeout(()=>panel.classList.add('open'),matchMedia('(prefers-reduced-motion: reduce)').matches?0:750)};
 function drawCart(){try{localStorage.setItem('cart',JSON.stringify(cart))}catch(e){}
@@ -394,30 +363,13 @@ filters.onclick=e=>{const c=e.target.dataset.c;if(!c)return;filters.querySelecto
  grid.querySelectorAll('.card').forEach(k=>k.style.display=(c==='Todo'||k.dataset.c===c)?'':'none')};
 
 drawCart();
-// ---- panel del dueño (se guarda en este navegador) ----
-(()=>{const $=id=>document.getElementById(id),AS=['XS','S','M','L','XL','XXL'];
- const esc=t=>String(t??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- let list=JSON.parse(JSON.stringify(CATALOG)),ed=null,photo='';
- const open=()=>{renderA();$('apanel').classList.add('open')},close=()=>{$('apanel').classList.remove('open');$('aform').hidden=true};
- const persist=()=>{try{localStorage.setItem('drayko-catalog',JSON.stringify(list));localStorage.removeItem('cart');sessionStorage.setItem('drk-admin','1')}catch(e){alert('No se pudo guardar: sin espacio en el navegador. Probá con fotos más livianas.');return}location.reload()};
- const shrink=f=>new Promise((ok,no)=>{const im=new Image(),u=URL.createObjectURL(f);im.onload=()=>{const k=Math.min(1,800/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);ok(c.toDataURL('image/jpeg',.8))};im.onerror=no;im.src=u});
- const pv=()=>{$('a_pv').innerHTML=photo?`<img src="${photo}" alt="">`:''};
- function renderA(){$('alist').innerHTML=list.map((x,i)=>`<div class="aitem"><img src="${x[5]||''}" alt=""><div class="ai"><b>${esc(x[0])}</b><br>${x[2]?'$'+esc(x[2]):'Consultar'}<br>${x[4]?Object.entries(x[4]).map(([s,n])=>s+':'+n).join(' · '):'sin control de stock'}</div><button data-e="${i}">Editar</button><button data-d="${i}">Borrar</button></div>`).join('')}
- function form(i){ed=i;const x=i==null?['','Remeras','','',{},'']:list[i];
-  $('a_n').value=x[0];$('a_d').value=x[3]||'';$('a_p').value=String(x[2]||'').replace(/\D/g,'');$('a_c').value=x[1];
-  $('a_s').innerHTML=AS.map(z=>`<label>${z}<input type="number" min="0" data-z="${z}" value="${(x[4]||{})[z]??''}"></label>`).join('');
-  photo=x[5]||'';pv();$('a_f').value='';$('aform').hidden=false;$('aform').scrollIntoView({behavior:'smooth'})}
- $('a_f').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{photo=await shrink(f);pv()}catch(_){alert('No se pudo leer esa imagen.')}};
- $('aform').onsubmit=e=>{e.preventDefault();const st={};$('a_s').querySelectorAll('input').forEach(n=>{if(n.value!=='')st[n.dataset.z]=Math.max(0,parseInt(n.value,10)||0)});
-  if(!Object.keys(st).length){alert('Cargá stock en al menos un talle (puede ser 0).');return}
-  if(!photo){alert('Subí una foto de la prenda.');return}
-  const p=+$('a_p').value||0,row=[$('a_n').value.trim(),$('a_c').value,p?p.toLocaleString('es-AR'):'',$('a_d').value.trim(),st,photo];
-  if(ed==null)list.unshift(row);else list[ed]=row;persist()};
- $('alist').onclick=e=>{const a=e.target.dataset.e,d=e.target.dataset.d;if(a!=null)form(+a);if(d!=null&&confirm('¿Borrar "'+list[+d][0]+'"? No se puede deshacer.')){list.splice(+d,1);persist()}};
- $('anew').onclick=()=>form(null);$('acancel').onclick=()=>$('aform').hidden=true;
- $('adminOpen').onclick=open;$('aclose').onclick=close;addEventListener('keydown',e=>{if(e.key==='Escape')close()});
- try{if(sessionStorage.getItem('drk-admin')){sessionStorage.removeItem('drk-admin');open()}}catch(e){}
-})();
+fetch('/api/products').then(r=>r.ok?r.json():null).then(list=>{
+ if(!Array.isArray(list)||!list.length)return;
+ items.length=0;list.forEach(x=>items.push(x));
+ cart=cart.map(l=>({...l,i:items.findIndex(x=>x[0]===l.n)})).filter(l=>l.i>=0);
+ Object.keys(chosen).forEach(k=>delete chosen[k]);
+ renderFilters();renderGrid();drawCart();tilt();
+}).catch(()=>{});
 // efectos: parallax 3D, brasas, reveal, tilt
 const hero=document.getElementById('hero'),stage=document.getElementById('stage');
 hero.addEventListener('pointermove',e=>{const r=hero.getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;
@@ -432,7 +384,7 @@ for(let i=0;i<70;i++)P.push({x:Math.random(),y:Math.random(),r:Math.random()*2+.
  cx.fillStyle='rgba(234,222,214,'+(.25+.35*Math.sin(p.d))+')';cx.beginPath();cx.arc(p.x*cv.width+Math.sin(p.d)*12,p.y*cv.height,p.r,0,7);cx.fill()});requestAnimationFrame(t)})();
 const io=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting&&(e.target.classList.add('in'),io.unobserve(e.target))),{threshold:.15});
 document.querySelectorAll('.card,h2,.about').forEach((el,i)=>{el.classList.add('reveal');el.style.transitionDelay=(i%4)*.08+'s';io.observe(el)});
-document.querySelectorAll('.card').forEach(c=>{c.addEventListener('pointermove',e=>{const r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;c.style.transform=`perspective(700px) rotateY(${x*10}deg) rotateX(${-y*10}deg)`});c.addEventListener('pointerleave',()=>c.style.transform='')});
+const tilt=()=>document.querySelectorAll('.card').forEach(c=>{c.addEventListener('pointermove',e=>{const r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;c.style.transform=`perspective(700px) rotateY(${x*10}deg) rotateX(${-y*10}deg)`});c.addEventListener('pointerleave',()=>c.style.transform='')});tilt();
 
 // loader: el dragón cruza la pantalla y luego entra el sitio
 (()=>{const L=document.getElementById('loader'),h=document.documentElement;let anim=false,load=document.readyState==='complete';

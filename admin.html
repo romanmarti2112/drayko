@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>DRAYKO — Panel del dueño</title>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bone:#EFE8DC;--bg:#0b0b0b;--red:#c8372d}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--bone);font:14px/1.4 'Space Mono',monospace;padding:20px;max-width:760px;margin-inline:auto}
+h1{font:400 2rem 'Anton',Impact,sans-serif;letter-spacing:.06em;margin:0 0 4px;text-transform:uppercase}
+.mut{color:#8a8079;font-size:12px}
+.paper{background:var(--bone);color:#111;padding:18px;margin:16px 0}
+label{display:grid;gap:4px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin:10px 0}
+input,textarea,select{width:100%;border:2px solid #111;background:transparent;color:#111;padding:9px;font:inherit;text-transform:none;letter-spacing:0}
+button{border:2px solid #111;background:none;color:#111;padding:8px 12px;font:700 12px 'Space Mono',monospace;text-transform:uppercase;cursor:pointer}
+button:hover{background:#111;color:var(--bone)}
+button.main{background:#111;color:var(--bone);width:100%;padding:13px;margin-top:8px}
+button.main:hover{background:#333}
+.row{display:flex;gap:10px;align-items:center;border-bottom:2px dashed #999;padding:10px 0}
+.row img{width:56px;height:56px;object-fit:cover;flex:none;background:#bbb}
+.row .i{flex:1;min-width:0;font-size:12px}
+.sz{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.pv img{max-width:100%;max-height:160px;display:block;margin-bottom:6px}
+.err{color:var(--red);font-weight:700;min-height:18px}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.top button{border-color:var(--bone);color:var(--bone)}.top button:hover{background:var(--bone);color:#000}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="top"><div><h1>Panel del dueño</h1><p class="mut">DRAYKO · los cambios se ven al instante en la tienda</p></div><button id="logout" hidden>Salir</button></div>
+
+<section id="login" class="paper" hidden>
+  <form id="lform">
+    <label>Contraseña<input type="password" id="pw" autocomplete="current-password" required autofocus></label>
+    <p class="err" id="lerr"></p>
+    <button class="main" type="submit">Entrar</button>
+  </form>
+</section>
+
+<section id="app" hidden>
+  <div class="paper">
+    <div id="list"></div>
+    <button class="main" id="new" type="button">+ Nueva prenda</button>
+  </div>
+  <form id="form" class="paper" hidden>
+    <b id="ftitle">NUEVA PRENDA</b>
+    <label>Nombre<input id="f_n" required maxlength="70"></label>
+    <label>Descripción<textarea id="f_d" maxlength="200"></textarea></label>
+    <label>Precio ($, sin puntos)<input id="f_p" type="number" min="0" step="500"></label>
+    <label>Categoría<select id="f_c"><option>Remeras</option><option>Bermudas</option><option>Buzos</option><option>Pantalones</option></select></label>
+    <span class="mut">TALLES Y STOCK — dejá vacío el talle que no tenés. Todo vacío = sin control de stock.</span>
+    <div class="sz" id="f_s"></div>
+    <label>Foto<input type="file" accept="image/*" id="f_f"></label>
+    <div class="pv" id="f_pv"></div>
+    <p class="err" id="ferr"></p>
+    <button class="main" type="submit" id="fsave">Guardar</button>
+    <button type="button" id="fcancel" style="width:100%;margin-top:8px">Cancelar</button>
+  </form>
+</section>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const ZS = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+const esc = (t) => String(t ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+let list = [], editing = null, photo = '', photoNew = false;
+
+async function api(path, opt = {}) {
+  const r = await fetch(path, { ...opt, headers: { 'Content-Type': 'application/json' }, body: opt.body ? JSON.stringify(opt.body) : undefined, credentials: 'same-origin' });
+  const j = await r.json().catch(() => ({}));
+  if (r.status === 401 && path !== '/api/login') { show(false); throw new Error('Sesión vencida'); }
+  if (!r.ok) throw new Error(j.error || 'Error');
+  return j;
+}
+function show(on) { $('login').hidden = on; $('app').hidden = !on; $('logout').hidden = !on; }
+
+async function load() {
+  list = await fetch('/api/products', { cache: 'no-store' }).then((r) => r.json());
+  $('list').innerHTML = list.map((x, i) => `<div class="row"><img src="${esc(x[5])}" alt=""><div class="i"><b>${esc(x[0])}</b><br>${x[2] ? '$' + esc(x[2]) : 'Consultar'} · ${esc(x[1])}<br>${x[4] ? Object.entries(x[4]).map(([s, n]) => s + ':' + n).join(' · ') : 'sin control de stock'}</div><button data-e="${i}">Editar</button><button data-d="${i}">Borrar</button></div>`).join('') || '<p class="mut">Todavía no hay prendas.</p>';
+}
+
+function shrink(file) {
+  return new Promise((ok, no) => {
+    const im = new Image(), u = URL.createObjectURL(file);
+    im.onload = () => { const k = Math.min(1, 800 / Math.max(im.width, im.height)), c = document.createElement('canvas'); c.width = Math.round(im.width * k); c.height = Math.round(im.height * k); c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); URL.revokeObjectURL(u); ok(c.toDataURL('image/jpeg', .8)); };
+    im.onerror = no; im.src = u;
+  });
+}
+const pv = () => { $('f_pv').innerHTML = photo ? `<img src="${esc(photo)}" alt="">` : ''; };
+
+function openForm(i) {
+  editing = i; const x = i == null ? ['', 'Remeras', '', '', null, '', null] : list[i];
+  $('ftitle').textContent = i == null ? 'NUEVA PRENDA' : 'EDITAR PRENDA';
+  $('f_n').value = x[0]; $('f_d').value = x[3] || ''; $('f_p').value = String(x[2] || '').replace(/\D/g, ''); $('f_c').value = x[1];
+  $('f_s').innerHTML = ZS.map((z) => `<label>${z}<input type="number" min="0" data-z="${z}" value="${x[4] && x[4][z] != null ? x[4][z] : ''}"></label>`).join('');
+  photo = x[5] || ''; photoNew = false; pv(); $('f_f').value = ''; $('ferr').textContent = '';
+  $('form').hidden = false; $('form').scrollIntoView({ behavior: 'smooth' });
+}
+
+$('f_f').onchange = async (e) => { const f = e.target.files[0]; if (!f) return; try { photo = await shrink(f); photoNew = true; pv(); } catch { $('ferr').textContent = 'No se pudo leer esa imagen.'; } };
+$('new').onclick = () => openForm(null);
+$('fcancel').onclick = () => { $('form').hidden = true; };
+$('list').onclick = async (e) => {
+  const ed = e.target.dataset.e, dl = e.target.dataset.d;
+  if (ed != null) openForm(+ed);
+  if (dl != null && confirm('¿Borrar "' + list[+dl][0] + '"? No se puede deshacer.')) { try { await api('/api/product?id=' + encodeURIComponent(list[+dl][6]), { method: 'DELETE' }); load(); } catch (er) { alert(er.message); } }
+};
+$('form').onsubmit = async (e) => {
+  e.preventDefault(); $('ferr').textContent = '';
+  const stock = {}; $('f_s').querySelectorAll('input').forEach((n) => { if (n.value !== '') stock[n.dataset.z] = Math.max(0, parseInt(n.value, 10) || 0); });
+  const p = +$('f_p').value || 0;
+  if (editing == null && !photoNew) { $('ferr').textContent = 'Subí una foto de la prenda.'; return; }
+  $('fsave').disabled = true;
+  try {
+    await api('/api/product', { method: 'POST', body: { id: editing == null ? undefined : list[editing][6], n: $('f_n').value, c: $('f_c').value, p: p ? p.toLocaleString('es-AR') : '', d: $('f_d').value, stock: Object.keys(stock).length ? stock : null, img: photoNew ? photo : undefined } });
+    $('form').hidden = true; load();
+  } catch (er) { $('ferr').textContent = er.message; }
+  $('fsave').disabled = false;
+};
+
+$('lform').onsubmit = async (e) => {
+  e.preventDefault(); $('lerr').textContent = '';
+  try { await api('/api/login', { method: 'POST', body: { password: $('pw').value } }); $('pw').value = ''; show(true); load(); }
+  catch (er) { $('lerr').textContent = er.message; }
+};
+$('logout').onclick = async () => { await api('/api/login', { method: 'DELETE' }); show(false); };
+
+(async () => { try { const j = await api('/api/login'); show(j.ok); if (j.ok) load(); else show(false); } catch { show(false); } })();
+</script>
+</body>
+</html>
