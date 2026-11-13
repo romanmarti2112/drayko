@@ -240,7 +240,19 @@ footer a:hover{color:var(--bone);border-color:var(--bone)}
   .hero .tags{font-size:.62rem}
   .grid{gap:26px}
   section{padding:70px 5vw}
+  /* móvil: barra en una sola fila, sin scroll horizontal */
+  nav{gap:8px}
+  .logo{font-size:24px;flex:none}
+  nav div{display:flex;align-items:center;justify-content:flex-end;gap:12px;min-width:0}
+  nav div a{margin-left:0;font-size:11px;letter-spacing:.1em}
+  nav div a[href^="https://wa.me/"]{display:none}
+  #cartBtn{margin-left:0;font-size:11px;padding:6px 9px;letter-spacing:.08em;white-space:nowrap}
+  .filters{flex-wrap:wrap;gap:8px}
+  .chip{padding:8px 12px;letter-spacing:.1em}
+  .hero .btns{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+  .hero .btns .btn{margin-left:0!important}
 }
+html{overflow-x:clip}
 @media(prefers-reduced-motion:reduce){
   body::after{animation:none}
   .item{animation:none}
