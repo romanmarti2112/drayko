@@ -5,7 +5,7 @@ import DEFAULTS from '../api/_defaults.js';
 
 const MAX_IMG = 1_500_000;
 const json = (body, status = 200, headers = {}) =>
-  new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', ...headers } });
+  new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff', ...headers } });
 
 const sign = (env, exp) => createHmac('sha256', (env.ADMIN_SECRET || '') + '|' + (env.ADMIN_PASSWORD || '')).update('adm:' + exp).digest('hex');
 const makeToken = (env) => { const exp = Date.now() + 12 * 3600e3; return exp + '.' + sign(env, exp); };
@@ -29,35 +29,43 @@ const body = (req) => req.json().catch(() => ({}));
 
 async function products(env) {
   const q = neon(env.DATABASE_URL);
-  const seeded = await q`select v from meta where k = 'seeded'`;
-  if (!seeded.length) {
-    for (let i = 0; i < DEFAULTS.length; i++) {
-      const [n, c, p, d] = DEFAULTS[i];
-      await q`insert into products (id, pos, data, img) values (${'p' + (i + 1)}, ${i}, ${JSON.stringify({ n, c, p, d, stock: null })}::jsonb, ${'img/p' + (i + 1) + '.jpg'}) on conflict do nothing`;
+  let rows = await q`select id, data, img, extract(epoch from updated_at)::bigint as t from products order by pos asc`;
+  if (!rows.length) {
+    const seeded = await q`select v from meta where k = 'seeded'`;
+    if (!seeded.length) {
+      for (let i = 0; i < DEFAULTS.length; i++) {
+        const [n, c, p, d] = DEFAULTS[i];
+        await q`insert into products (id, pos, data, img) values (${'p' + (i + 1)}, ${i}, ${JSON.stringify({ n, c, p, d, stock: null })}::jsonb, ${'img/p' + (i + 1) + '.jpg'}) on conflict do nothing`;
+      }
+      await q`insert into meta (k, v) values ('seeded', '1') on conflict do nothing`;
+      rows = await q`select id, data, img, extract(epoch from updated_at)::bigint as t from products order by pos asc`;
     }
-    await q`insert into meta (k, v) values ('seeded', '1') on conflict do nothing`;
   }
-  const rows = await q`select id, data, img, extract(epoch from updated_at)::bigint as t from products order by pos asc`;
   return json(rows.map((r) => [
     r.data.n, r.data.c, r.data.p, r.data.d, r.data.stock || null,
     r.img.startsWith('data:') ? `/api/img?id=${r.id}&v=${r.t}` : r.img, r.id,
-  ]));
+  ]), 200, { 'Cache-Control': 'public, max-age=10' });
 }
 
 async function img(env, url) {
   const rows = await neon(env.DATABASE_URL)`select img from products where id = ${url.searchParams.get('id') || ''}`;
   const m = rows.length && /^data:(image\/jpeg);base64,(.+)$/s.exec(rows[0].img);
   if (!m) return new Response(null, { status: 404 });
-  return new Response(Buffer.from(m[2], 'base64'), { headers: { 'Content-Type': m[1], 'Cache-Control': 'public, max-age=31536000, immutable' } });
+  return new Response(Buffer.from(m[2], 'base64'), { headers: { 'Content-Type': m[1], 'Cache-Control': 'public, max-age=31536000, immutable', 'X-Content-Type-Options': 'nosniff' } });
 }
 
 async function login(req, env) {
   if (req.method === 'GET') return json({ ok: isAuth(req, env) });
   if (req.method === 'DELETE') return json({ ok: true }, 200, { 'Set-Cookie': 'adm=; HttpOnly; Secure; SameSite=Strict; Path=/api; Max-Age=0' });
   if (req.method !== 'POST') return new Response(null, { status: 405 });
+  const q = neon(env.DATABASE_URL), ip = req.headers.get('CF-Connecting-IP') || 'x';
+  const [{ n }] = await q`select count(*)::int as n from login_attempts where ip = ${ip} and ts > now() - interval '15 minutes'`;
+  if (n >= 8) return json({ error: 'Demasiados intentos. Esperá 15 minutos.' }, 429);
   const pass = (await body(req)).password;
   if (typeof pass !== 'string' || !passOk(env, pass)) {
-    await new Promise((r) => setTimeout(r, 1000)); // frena los intentos al azar
+    await q`insert into login_attempts (ip) values (${ip})`;
+    await q`delete from login_attempts where ts < now() - interval '1 day'`;
+    await new Promise((r) => setTimeout(r, 1000));
     return json({ error: 'Contraseña incorrecta' }, 401);
   }
   return json({ ok: true }, 200, { 'Set-Cookie': `adm=${makeToken(env)}; HttpOnly; Secure; SameSite=Strict; Path=/api; Max-Age=${12 * 3600}` });

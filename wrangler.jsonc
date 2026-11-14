@@ -3,6 +3,7 @@
   "main": "worker/index.js",
   "compatibility_date": "2025-09-01",
   "compatibility_flags": ["nodejs_compat"],
+  "placement": { "mode": "smart" },
   "routes": [
     { "pattern": "drayko.store", "custom_domain": true },
     { "pattern": "www.drayko.store", "custom_domain": true }
